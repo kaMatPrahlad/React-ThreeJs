@@ -1,9 +1,10 @@
 import "./App.css";
+import Dog from "./Components/Dog";
 
 function App() {
   return (
     <>
-      <h1>Welcome to React</h1>
+      <Dog />
     </>
   );
 }
