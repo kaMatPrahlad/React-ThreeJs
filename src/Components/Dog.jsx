@@ -1,25 +1,52 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as THREE from "three";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls, useGLTF, useTexture } from "@react-three/drei";
+import {
+  OrbitControls,
+  useAnimations,
+  useGLTF,
+  useTexture,
+} from "@react-three/drei";
 
 const Dog = () => {
   const model = useGLTF("models/dog.drc.glb");
 
   useThree(({ camera, scene, gl }) => {
-    console.log(camera.position);
     camera.position.z = 0.55;
+    gl.toneMapping = THREE.ReinhardToneMapping;
+    gl.outputColorSpace = THREE.SRGBColorSpace;
   });
 
-  const textures = useTexture({
-    normalMap: "/dog_normals.jpg",
+  const { actions } = useAnimations(model.animations, model.scene);
+  useEffect(() => {
+    actions["Take 001"].play();
+  }, [actions]);
+
+  const [normalMap, sampleMatcap] = useTexture([
+    "/dog_normals.jpg",
+    "/matcap/mat-2.png",
+  ]).map((texture) => {
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
   });
+
+  // const textures = useTexture(
+  //   {
+  //     normalMap: "/dog_normals.jpg",
+  //     sampleMatcap: "/matcap/mat-2.png",
+  //   },
+  //   (textures) => {
+  //     textures.normalMap.flipY = false;
+  //     textures.sampleMatcap.colorSpace = THREE.SRGBColorSpace;
+  //   },
+  // );
 
   model.scene.traverse((child) => {
     if (child.name.includes("DOG")) {
       child.material = new THREE.MeshMatcapMaterial({
-        normalMap: textures.normalMap,
-        color: 0xff0000,
+        normalMap: normalMap,
+        matcap: sampleMatcap,
       });
     }
   });
