@@ -31,6 +31,14 @@ const Dog = () => {
     return texture;
   });
 
+  const [branchMap, branchNormalMap] = useTexture([
+    "/branches_diffuse.jpeg",
+    "branches_normals.jpeg",
+  ]).map((texture) => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  });
+
   // const textures = useTexture(
   //   {
   //     normalMap: "/dog_normals.jpg",
@@ -42,12 +50,20 @@ const Dog = () => {
   //   },
   // );
 
+  const dogMaterial = new THREE.MeshMatcapMaterial({
+    normalMap: normalMap,
+    matcap: sampleMatcap,
+  });
+  const branchMaterial = new THREE.MeshMatcapMaterial({
+    normalMap: branchNormalMap,
+    matcap: branchMap,
+  });
+
   model.scene.traverse((child) => {
     if (child.name.includes("DOG")) {
-      child.material = new THREE.MeshMatcapMaterial({
-        normalMap: normalMap,
-        matcap: sampleMatcap,
-      });
+      child.material = dogMaterial;
+    } else {
+      child.material = branchMaterial;
     }
   });
 
