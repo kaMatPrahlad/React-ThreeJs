@@ -7,8 +7,16 @@
 html,
 body,
 #root {
-  height: 100%;
   width: 100%;
   background-color: black;
-  color: white;
+}
+
+main {
+  position: relative;
+}
+section {
+  min-height: 100vh;
+  border: 2px solid white;
+  z-index: 2;
+  position: relative;
 }
